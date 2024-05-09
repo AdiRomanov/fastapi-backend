@@ -2,6 +2,8 @@ from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.expression import text
 from sqlalchemy.sql.sqltypes import TIMESTAMP
+from sqlalchemy.dialects.postgresql import JSONB
+
 
 from .database import Base
 
@@ -36,3 +38,20 @@ class Vote(Base):
         "users.id", ondelete="CASCADE"), primary_key=True)
     post_id = Column(Integer, ForeignKey(
         "posts.id", ondelete="CASCADE"), primary_key=True)
+
+
+class Recipe(Base):
+    __tablename__ = "recipes"
+
+    id = Column(Integer, primary_key=True, nullable=False)
+    name = Column(String, nullable=False)
+    cook_time = Column(Integer, nullable=False)
+    ingredients = Column(JSONB, nullable=False)  # Use JSONB to store ingredients
+    directions = Column(String, nullable=False)  # Assuming directions is a plain string, but can be Text if long
+
+
+class Ingredient(Base):
+    __tablename__ = 'ingredients'
+
+    id = Column(Integer, primary_key=True)
+    ingredient = Column(String, nullable=False)  # Assuming each entry stores a single ingredient

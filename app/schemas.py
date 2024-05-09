@@ -1,8 +1,9 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, validator
 from datetime import datetime
 from typing import Optional
 
 from pydantic.types import conint
+import ast
 
 
 class PostBase(BaseModel):
@@ -46,6 +47,10 @@ class UserCreate(BaseModel):
     email: EmailStr
     password: str
 
+class UserUpdate(BaseModel):
+    email: Optional[EmailStr]
+    password: Optional[str]
+    
 
 class UserLogin(BaseModel):
     email: EmailStr
@@ -64,3 +69,42 @@ class TokenData(BaseModel):
 class Vote(BaseModel):
     post_id: int
     dir: conint(le=1) # type: ignore
+
+
+class RecipeBase(BaseModel):
+    name: str
+    cook_time: int
+    ingredients: list[str]
+    directions: str
+
+    @validator('ingredients', pre=True)
+    def ensure_list(cls, v):
+        if isinstance(v, str):
+            try:
+                # Attempt to evaluate the string to a list
+                evaluated = ast.literal_eval(v)
+                if not isinstance(evaluated, list):
+                    raise ValueError("Ingredients must be a list")
+                # Further check to ensure all elements are strings
+                if not all(isinstance(item, str) for item in evaluated):
+                    raise ValueError("All ingredients must be strings")
+                return evaluated
+            except (SyntaxError, ValueError):
+                raise ValueError("Ingredients must be a valid list of strings")
+        return v
+
+
+class Recipe(RecipeBase):
+    id: int
+
+    class Config:
+        orm_mode = True
+
+class IngredientBase(BaseModel):
+    ingredient: str
+
+class Ingredient(IngredientBase):
+    id: int
+
+    class Config:
+        orm_mode = True
