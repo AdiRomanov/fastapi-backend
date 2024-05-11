@@ -35,7 +35,6 @@ def get_recipe(id: int, db: Session = Depends(get_db), current_user: int = Depen
     recipe = db.query(models.Recipe).filter(models.Recipe.id == id).first()
     return recipe
 
-
 @router.put("/{id}", response_model=schemas.Recipe)
 def update_recipe(id: int, recipe: schemas.RecipeBase, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
     db.query(models.Recipe).filter(models.Recipe.id == id).update(recipe.dict())

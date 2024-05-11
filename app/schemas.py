@@ -108,3 +108,21 @@ class Ingredient(IngredientBase):
 
     class Config:
         orm_mode = True
+
+class UserIngredientBase(BaseModel):
+    user_id: int
+    ingredient_id: int
+    
+
+
+class UserIngredientCreate(UserIngredientBase):
+    pass
+
+
+class UserIngredient(UserIngredientBase):
+    class Config:
+        orm_mode = True
+
+
+class UserIngredientUpdate(BaseModel):
+    pass    
