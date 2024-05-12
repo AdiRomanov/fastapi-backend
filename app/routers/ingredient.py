@@ -29,7 +29,7 @@ def create_ingredient(ingredient: schemas.IngredientBase, db: Session = Depends(
     return new_ingredient
 
 @router.get("/{id}", response_model=schemas.Ingredient)
-def get_ingredient(id: int, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
+def get_ingredient(id: int, db: Session = Depends(get_db)):
     ingredient = db.query(models.Ingredient).filter(models.Ingredient.id == id).first()
     return ingredient
 

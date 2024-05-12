@@ -40,3 +40,12 @@ class UserIngredient(Base):
     
     # No need to define back_populates here if it's just a simple association table without extra logic
     # Instead, just ensure that the secondary table in User and Ingredient is correctly pointed to this table
+
+class Recipe(Base):
+    __tablename__ = 'recipes'
+    
+    id = Column(Integer, primary_key=True, nullable=False)
+    name = Column(String, nullable=False)
+    cook_time = Column(Integer, nullable=False)
+    ingredients = Column(JSONB, nullable=False)
+    directions = Column(String, nullable=False)
