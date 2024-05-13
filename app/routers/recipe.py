@@ -1,3 +1,4 @@
+import ast
 from fastapi import FastAPI, Response, status, HTTPException, Depends, APIRouter
 from sqlalchemy.orm import Session
 from typing import List, Optional
@@ -49,4 +50,42 @@ def delete_recipe(id: int, db: Session = Depends(get_db), current_user: int = De
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
+@router.get("/recipe-matches/")
+def get_recipe_matches(db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
+    # Fetch the user ingredients from the database
+    user_ingredients = db.query(models.UserIngredient).filter(models.UserIngredient.user_id == current_user.id).all()
+    user_ingredient_list = []
 
+    if not user_ingredients:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail="No ingredients found for the user")
+    
+    for user_ingredient in user_ingredients:
+        user_ingredient_list.append(db.query(models.Ingredient).filter(models.Ingredient.id == user_ingredient.ingredient_id).first().ingredient)
+
+    # print(user_ingredient_list)
+
+    # Call the matching logic function
+    try:
+        matched_recipes = match_recipes(user_ingredient_list, db)
+        return {"recipes": matched_recipes}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+def match_recipes(user_ingredients, db):
+    recipes = db.query(models.Recipe).all()  # Fetch all recipes
+    recipe_scores = []
+    for recipe in recipes:
+        
+        recipe_ingredients = set(ast.literal_eval(recipe.ingredients)) # convert string to list
+        user_ingredients_set = set(user_ingredients)
+        common_ingredients = recipe_ingredients.intersection(user_ingredients_set)
+        match_percentage = len(common_ingredients) / len(recipe_ingredients) if recipe_ingredients else 0
+        match_percentage = round(match_percentage * 100, 2)
+        if match_percentage >= 30: # Only consider recipes with at least 30% match
+            recipe_scores.append((recipe, match_percentage))
+        
+
+    # Sort by match percentage in descending order
+    recipe_scores.sort(key=lambda x: x[1], reverse=True)
+    return [{"id": recipe.id,"name": recipe.name, "match_percentage": perc} for recipe, perc in recipe_scores]

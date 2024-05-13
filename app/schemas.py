@@ -126,3 +126,18 @@ class UserIngredient(UserIngredientBase):
 
 class UserIngredientUpdate(BaseModel):
     pass    
+
+
+class ShoppingListBase(BaseModel):
+    user_id: int
+    ingredient_id: int
+
+class ShoppingListCreate(ShoppingListBase):
+    pass
+
+class ShoppingList(ShoppingListBase):
+    class Config:
+        orm_mode = True
+
+class ShoppingListUpdate(BaseModel):
+    pass
