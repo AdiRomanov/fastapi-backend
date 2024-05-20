@@ -141,3 +141,18 @@ class ShoppingList(ShoppingListBase):
 
 class ShoppingListUpdate(BaseModel):
     pass
+
+class FavoriteRecipeBase(BaseModel):
+    user_id: int
+    recipe_id: int
+
+class FavoriteRecipeCreate(FavoriteRecipeBase):
+    pass
+
+class FavoriteRecipe(FavoriteRecipeBase):  
+    class Config:
+        orm_mode = True
+
+class FavoriteRecipeUpdate(BaseModel):
+    pass
+

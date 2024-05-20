@@ -38,8 +38,7 @@ def get_shopping_list_by_id(id: int, db: Session = Depends(get_db), current_user
 
     shopping_list = db.query(models.ShoppingList).filter(models.ShoppingList.user_id == current_user.id).all()
     if not shopping_list:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f"Shopping List with id: {id} does not exist")
+        return []
 
     return shopping_list
 

@@ -43,8 +43,7 @@ def get_user_ingredient(id: int, db: Session = Depends(get_db), current_user: in
 
     user_ingredient = db.query(models.UserIngredient).filter(models.UserIngredient.user_id == id).all()
     if not user_ingredient:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f"UserIngredient with id: {id} does not exist")
+        []
 
     return user_ingredient
 

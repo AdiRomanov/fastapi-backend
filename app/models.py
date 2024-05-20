@@ -26,6 +26,7 @@ class User(Base):
     posts = relationship("Post", back_populates="owner")
     ingredients = relationship('Ingredient', secondary='user_ingredients', back_populates='users')
     shopping_list = relationship('ShoppingList', back_populates='user')
+    favorite_recipes = relationship("FavoriteRecipe", back_populates="user")
 
 class Ingredient(Base):
     __tablename__ = 'ingredients'
@@ -52,6 +53,9 @@ class Recipe(Base):
     ingredients = Column(JSONB, nullable=False)
     directions = Column(String, nullable=False)
 
+    favorite_recipes_id = relationship("FavoriteRecipe", back_populates="recipe")
+
+
 class ShoppingList(Base):
     __tablename__ = 'shopping_lists'
     user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), primary_key=True)
@@ -59,3 +63,13 @@ class ShoppingList(Base):
 
     user = relationship('User', back_populates='shopping_list')
     ingredient = relationship('Ingredient', back_populates='shopping_list_items')
+
+
+class FavoriteRecipe(Base):
+    __tablename__ = 'favorite_recipes'
+    
+    user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), primary_key=True)
+    recipe_id = Column(Integer, ForeignKey('recipes.id', ondelete='CASCADE'), primary_key=True)
+
+    user = relationship("User", back_populates="favorite_recipes")
+    recipe = relationship("Recipe", back_populates="favorite_recipes_id")
