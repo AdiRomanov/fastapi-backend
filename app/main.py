@@ -35,4 +35,4 @@ app.include_router(favorite_recipes.router)
 
 @app.get("/")
 def root():
-    return {"message": "Hello World merge merge"}
+    return {"message": "Hello World merge merge!"}
