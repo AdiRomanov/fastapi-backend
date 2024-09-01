@@ -1,4 +1,3 @@
-# CanMyPcRunIt 
 
 ## Ghid pentru Mediul de Lucru #RO (English below)
 
@@ -79,7 +78,6 @@ Pentru a rula aplicația, este important să folosim `virtualenv` pentru a crea 
 
 
 
-# CanMyPcRunIt 
 
 ## Guide for Working Environment #EN
 
